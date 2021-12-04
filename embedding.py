@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
+import numpy.linalg as la
+from sklearn.utils.extmath import randomized_svd
+
 def get_co_mat(corpus, window_len =2):
     '''
     corpus: a list of sentences with words tokenized/lemmatized/lowered
@@ -65,3 +68,22 @@ def pmi(arr):
     _pmi[_pmi < 0] = 0
 
     return _pmi
+
+def SVD_pmi(_pmi, n_components = 100, gamma = 0.5):
+    '''
+    Perform SVD on ppmi matrix to get the low-dimensional approximations of the PPMI embeddings
+    gamma: the eigenvalue weighting parameter, setting gamme< 1 has been shown to dramatically improve embedding
+    qualities
+    n_componentsL desired dimensionality of output data. Must be strictly less than the number of features/unique tokens.
+    
+    '''
+    U, S, Vt = randomized_svd(_pmi,n_components,random_state=42)
+    if gamma == 0.0:
+        SVD_emb = U
+    elif gamma == 1.0:
+        SVD_emb = S*U
+    else:
+        SVD_emb = np.power(S, gamma)*U
+    print(U)
+    
+    return SVD_emb
