@@ -1,1 +1,3 @@
 news from 1990 to 2009
+
+data structure: save as a dict, key is year and vaule is news 
