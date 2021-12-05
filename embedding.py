@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import heapq
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy.linalg as la
 from sklearn.utils.extmath import randomized_svd
+from sklearn import preprocessing
 
 def get_co_mat(corpus, window_len =2):
     '''
@@ -17,7 +19,7 @@ def get_co_mat(corpus, window_len =2):
     co_mat = np.zeros((n,n))
     for sentence in corpus:
         update_co_mat(sentence, co_mat, uniq_wrds, window_len)
-    return co_mat
+    return co_mat, uniq_wrds
     
 def update_co_mat(sentence, co_mat, uniq_wrds, window_len =2):   
     # Get all the words in the sentence and store it in an array wrd_lst
@@ -77,6 +79,7 @@ def SVD_pmi(_pmi, n_components = 100, gamma = 0.5):
     qualities
     n_componentsL desired dimensionality of output data. Must be strictly less than the number of features/unique tokens.
     
+    return truncated embeddings.
     '''
     U, S, Vt = randomized_svd(_pmi,n_components,random_state=42)
     if gamma == 0.0:
@@ -88,3 +91,18 @@ def SVD_pmi(_pmi, n_components = 100, gamma = 0.5):
     #print(U)
     
     return SVD_emb
+
+def closest(embed, vocab_ind, vocab_list, n=10):
+    """   
+    Normalize vectors and compute the most similary 10 words for target vocab.
+    Input:
+        embed: embedding matrix
+        vocab_ind: index of the target word
+        vocab_list: unique vocabularies
+        n: number of most similary words to be returned 
+    Return:
+        list of tuple (score, word)
+    """
+    normalized = preprocessing.normalize(embed)
+    scores = normalized.dot(embed[vocab_ind])
+    return heapq.nlargest(n, zip(scores, vocab_list))
