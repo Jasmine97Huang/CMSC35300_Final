@@ -4,7 +4,7 @@ from gensim import models
 import nltk
 from nltk.stem.snowball import SnowballStemmer
 from sklearn import preprocessing
-
+import string
 
 def convert_year(year):
     '''
@@ -29,6 +29,14 @@ def convert_year(year):
         return '1950s'
     else:
         return None
+    
+def combine_sentences(token_series):
+    '''
+    combine a list of tokens to a list of sentence
+    '''
+    sentence = ' '.join(token_series)
+    return sentence
+
 
 def tokenize_lyric(text_series, stopword = False):
     '''
@@ -38,7 +46,10 @@ def tokenize_lyric(text_series, stopword = False):
     '''
     # Clean text with regex
     clean = text_series.str.lower()
-
+    #print(clean)
+    #remove punctuations
+    translate_table = dict((ord(char), None) for char in string.punctuation)   
+    clean = clean.apply(lambda text: text.translate(translate_table).strip())
     # Anonymous tokenizer + stemmer functions
     if stopword:
         stop = nltk.corpus.stopwords.words('english')
