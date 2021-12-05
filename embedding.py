@@ -25,21 +25,22 @@ def update_co_mat(sentence, co_mat, uniq_wrds, window_len =2):
     
     # Consider each word as a focus word
     for focus_wrd_indx, focus_wrd in enumerate(wrd_list):
-        focus_wrd = focus_wrd.lower()
-        # Get the indices of all the context words for the given focus word
-        # focus word is counted as context word for itself
-        for contxt_wrd_indx in range((max(0,focus_wrd_indx - window_len)),(min(len(wrd_list),focus_wrd_indx + window_len +1))):                        
-            # If context words are in the unique words list
-            if wrd_list[contxt_wrd_indx] in uniq_wrds:
-                
-                # To identify the row number, get the index of the focus_wrd in the uniq_wrds list
-                co_mat_row_indx = uniq_wrds.index(focus_wrd)
-                
-                # To identify the column number, get the index of the context words in the uniq_wrds list
-                co_mat_col_indx = uniq_wrds.index(wrd_list[contxt_wrd_indx])
-                                
-                # Update the respective columns of the corresponding focus word row
-                co_mat[co_mat_row_indx][co_mat_col_indx] += 1
+        if focus_wrd.isalpha():
+            focus_wrd = focus_wrd.lower()
+            # Get the indices of all the context words for the given focus word
+            # focus word is counted as context word for itself
+            for contxt_wrd_indx in range((max(0,focus_wrd_indx - window_len)),(min(len(wrd_list),focus_wrd_indx + window_len +1))):                        
+                # If context words are in the unique words list
+                if wrd_list[contxt_wrd_indx] in uniq_wrds:
+
+                    # To identify the row number, get the index of the focus_wrd in the uniq_wrds list
+                    co_mat_row_indx = uniq_wrds.index(focus_wrd)
+
+                    # To identify the column number, get the index of the context words in the uniq_wrds list
+                    co_mat_col_indx = uniq_wrds.index(wrd_list[contxt_wrd_indx])
+
+                    # Update the respective columns of the corresponding focus word row
+                    co_mat[co_mat_row_indx][co_mat_col_indx] += 1
 
 
 def pmi(arr):
@@ -84,6 +85,6 @@ def SVD_pmi(_pmi, n_components = 100, gamma = 0.5):
         SVD_emb = S*U
     else:
         SVD_emb = np.power(S, gamma)*U
-    print(U)
+    #print(U)
     
     return SVD_emb
