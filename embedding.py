@@ -104,5 +104,5 @@ def closest(embed, vocab_ind, vocab_list, n=10):
         list of tuple (score, word)
     """
     normalized = preprocessing.normalize(embed)
-    scores = normalized.dot(embed[vocab_ind])
+    scores = normalized.dot(normalized[vocab_ind])
     return heapq.nlargest(n, zip(scores, vocab_list))
